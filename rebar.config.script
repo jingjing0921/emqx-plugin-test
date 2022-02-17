@@ -25,7 +25,7 @@ SortFun = fun(T1, T2) ->
 
 Tags = string:tokens(os:cmd("git tag -l \"v*\" --points-at $(git rev-parse $(git describe --abbrev=0 --tags))"), "\n"),
 
-LatestTag = lists:last(lists:sort(SortFun, Tags)),
+LatestTag = "v4.0.0",
 
 UrlPrefix = "https://github.com/emqx/",
 

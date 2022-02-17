@@ -18,13 +18,32 @@
 
 -behaviour(supervisor).
 
--export([start_link/0]).
+-export([ start_link/2
+    , start_registry_proc/3
+    , init/1
+]).
 
--export([init/1]).
+% 需要被监控的进程，通过supervisor的start_child启动
+start_registry_proc(Sup, TabName, PredefTopics) ->
+    Registry = #{id       => TabName,
+        start    => {emqx_plugin_test_registry, start_link, [TabName, PredefTopics]},
+        restart  => permanent,
+        shutdown => 5000,
+        type     => worker,
+        modules  => [emqx_plugin_test_registry]},
+    handle_ret(supervisor:start_child(Sup, Registry)).
 
-start_link() ->
-    supervisor:start_link({local, ?MODULE}, ?MODULE, []).
+start_link(Addr, GwId) ->
+    supervisor:start_link({local, ?MODULE}, ?MODULE, [Addr, GwId]).
 
-init([]) ->
-    {ok, { {one_for_all, 0, 1}, []} }.
+init([{_Ip, Port}, GwId]) ->
+    Broadcast = #{id       => emqx_plugin_test_broadcast,
+        start    => {emqx_plugin_test_broadcast, start_link, [GwId, Port]},
+        restart  => permanent,
+        shutdown => brutal_kill,
+        type     => worker,
+        modules  => [emqx_plugin_test_broadcast]},
+    {ok, {{one_for_one, 10, 3600}, [Broadcast]}}.
 
+handle_ret({ok, Pid, _Info}) -> {ok, Pid};
+handle_ret(Ret) -> Ret.

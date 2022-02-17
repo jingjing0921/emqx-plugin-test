@@ -3,7 +3,7 @@
   {vsn, "git"},
   {modules, []},
   {registered, [emqx_plugin_test_sup]},
-  {applications, [kernel,stdlib]},
+  {applications, [kernel,stdlib,esockd]},
   {mod, {emqx_plugin_test_app,[]}},
   {env, []}
  ]}.

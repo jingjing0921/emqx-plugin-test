@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="emqx">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../emqx" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
